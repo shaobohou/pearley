@@ -6,27 +6,6 @@
 using std::cout;
 using std::endl;
 
-// define useful hash functions
-namespace __gnu_cxx
-{
-    template <>
-    struct hash<std::string>
-    {
-        size_t operator()(const std::string &x) const
-        {
-            return hash<const char *>()(x.c_str());
-        }
-    };
-
-    template <>
-    struct hash<EarleyState<std::string> >
-    {
-        size_t operator()(const EarleyState<std::string> &x) const
-        {
-            return x.start()*x.dot()*atoi(x.rule().LHS().c_str());
-        }
-    };
-}
 
 std::vector<GrammarRule<std::string> > readRules(std::istream &in)
 {

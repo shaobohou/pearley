@@ -1,14 +1,13 @@
 #ifndef EARLEY_PARSER
 #define EARLEY_PARSER
 
-#include <ext/hash_map>
-#include <ext/hash_set>
-
 #include "LinearAlgebra.h"
 #include "GrammarRule.h"
 #include "EarleyState.h"
 #include "ParseTree.h"
 
+#include <map>
+#include <set>
 
 
 // Earley Parser template definition
@@ -45,16 +44,16 @@ class EarleyParser : public Stringable
 
         // constructed private variables
         std::vector<T> terminals;
-        __gnu_cxx::hash_map<T, unsigned int> terminal2index;
+		std::map<T, unsigned int> terminal2index;
         std::vector<RulesList<T> > rules_lists;
-        __gnu_cxx::hash_map<T, unsigned int> nonterminal2rules_list;
+		std::map<T, unsigned int> nonterminal2rules_list;
 
         void checkInputs() const;
         void normaliseWeights();
 
         // in_parse_column refers to the column that in_states originated from in the parse_table
         EarleySet predict(const EarleySet &in_states, unsigned int in_parse_column) const;
-        EarleySet scan(const EarleySet &in_states, unsigned int in_parse_column, const __gnu_cxx::hash_set<T> &constraint_terminals) const;
+        EarleySet scan(const EarleySet &in_states, unsigned int in_parse_column, const std::set<T> &constraint_terminals) const;
         EarleySet complete(const EarleySet &in_states, const std::vector<EarleySet> &in_chart) const;
 
         static void accumulateCompletionProbability(EarleySet &completed_states, ProgenitorsLists &progenitors_lists, unsigned int index, const std::vector<EarleySet> &in_chart);
@@ -67,8 +66,8 @@ class EarleyParser : public Stringable
 using std::vector;
 using std::string;
 using std::pair;
-using __gnu_cxx::hash_map;
-using __gnu_cxx::hash_set;
+using std::map;
+using std::set;
 
 // public template functions
 
@@ -228,7 +227,7 @@ vector<unsigned int> EarleyParser<T>::parse_word(vector<EarleySet> &earley_chart
     std::cout << "-----------------------------------------------------" << std::endl << std::endl;
 
     std::cout << "scanned" << std::endl;
-    hash_set<T> constraint_terminals;
+    set<T> constraint_terminals;
     constraint_terminals.insert(in_word);
     // constraint_terminals.insert(terminals.begin(), terminals.end());
     EarleySet scanned_states = scan(earley_chart.back(), earley_chart.size()-1, constraint_terminals);
@@ -277,7 +276,7 @@ ParseTree<T> EarleyParser<T>::getViterbiParse(const EarleyState<T> &end_state, c
         ParseTree<T> left_tree = getViterbiParse(incompleted_state, earley_chart);
 
         const T &end_symbol = end_state.lastSymbol();
-        typename hash_map<T, unsigned int>::const_iterator nonterminal2rules_list_it = nonterminal2rules_list.find(end_symbol);
+        typename map<T, unsigned int>::const_iterator nonterminal2rules_list_it = nonterminal2rules_list.find(end_symbol);
         if(nonterminal2rules_list_it == nonterminal2rules_list.end())
             left_tree.attach(1, ParseTree<T>(std::vector<T>(1, end_symbol)));
         else
@@ -300,26 +299,26 @@ template <typename T>
 std::vector<std::pair<T, double> > EarleyParser<T>::getNextWordTransitions(const EarleySet &in_states) const
 {
     double prob_sum = 0.0;
-    hash_map<T, double> symbol2prob;
+    map<T, double> symbol2prob;
     for(unsigned int i = 0; i < in_states.size(); i++)
     {
         if(in_states[i].isComplete())
             continue;
 
         const T &symbol_after_dot = in_states[i].nextSymbol();
-        typename hash_map<T, unsigned int>::const_iterator nonterminal2rules_list_it = nonterminal2rules_list.find(symbol_after_dot);
+        typename map<T, unsigned int>::const_iterator nonterminal2rules_list_it = nonterminal2rules_list.find(symbol_after_dot);
         if(nonterminal2rules_list_it != nonterminal2rules_list.end())
             continue;
 
         prob_sum += in_states[i].alpha();
-        typename hash_map<T, double>::iterator symbol2prob_it = symbol2prob.find(symbol_after_dot);
+        typename map<T, double>::iterator symbol2prob_it = symbol2prob.find(symbol_after_dot);
         if(symbol2prob_it == symbol2prob.end())
             symbol2prob[symbol_after_dot] = in_states[i].alpha();
         else
             symbol2prob_it->second += in_states[i].alpha();
     }
 
-    for(typename hash_map<T, double>::iterator it = symbol2prob.begin(); it != symbol2prob.end(); it++)
+    for(typename map<T, double>::iterator it = symbol2prob.begin(); it != symbol2prob.end(); it++)
         it->second /= prob_sum;
 
     return std::vector<std::pair<T, double> >(symbol2prob.begin(), symbol2prob.end());
@@ -403,7 +402,7 @@ typename EarleyParser<T>::EarleySet EarleyParser<T>::predict(const EarleySet &in
     //assert(in_states.size() > 0);
 
     // accumulate alphas of inputs states with the same nonterminal Z to the right of the dot
-    hash_map<unsigned int, double> Z2alphas;
+    map<unsigned int, double> Z2alphas;
     for(unsigned int i = 0; i < in_states.size(); i++)
     {
         // if the current_state is already complete, proceed to the next state
@@ -413,13 +412,13 @@ typename EarleyParser<T>::EarleySet EarleyParser<T>::predict(const EarleySet &in
 
         // if the next symbol after the dot is a terminal, proceed to the next state
         const T& symbol_after_dot = current_state.nextSymbol();
-        typename hash_map<T, unsigned int>::const_iterator nonterminal2rules_list_it = nonterminal2rules_list.find(symbol_after_dot);
+        typename map<T, unsigned int>::const_iterator nonterminal2rules_list_it = nonterminal2rules_list.find(symbol_after_dot);
         if(nonterminal2rules_list_it == nonterminal2rules_list.end())
             continue;
 
         // accumulate alpha for state with the same unexpanded nonterminal to the right of the dot (Z)
         unsigned int list_index = nonterminal2rules_list_it->second;
-        hash_map<unsigned int, double>::iterator Z2alphas_it = Z2alphas.find(list_index);
+        map<unsigned int, double>::iterator Z2alphas_it = Z2alphas.find(list_index);
         if(Z2alphas_it == Z2alphas.end())
             Z2alphas[list_index]  = in_states[i].alpha();
         else
@@ -427,8 +426,8 @@ typename EarleyParser<T>::EarleySet EarleyParser<T>::predict(const EarleySet &in
     }
 
     // accumulate alphas of the nonterminal Y to the right of the dot through transitive left corner relationship, Z ==> Y
-    hash_map<unsigned int, double> Y2alphas;
-    for(hash_map<unsigned int, double>::const_iterator it = Z2alphas.begin(); it != Z2alphas.end(); it++)
+    map<unsigned int, double> Y2alphas;
+    for(map<unsigned int, double>::const_iterator it = Z2alphas.begin(); it != Z2alphas.end(); it++)
     {
         const unsigned int Z_index = it->first;
         const double Z_alpha = it->second;
@@ -438,7 +437,7 @@ typename EarleyParser<T>::EarleySet EarleyParser<T>::predict(const EarleySet &in
         for(unsigned int j = 0; j < left_corners.size(); j++)
         {
             unsigned int left_corner_index = left_corners[j];
-            hash_map<unsigned int, double>::iterator Y2alphas_it = Y2alphas.find(left_corner_index);
+            map<unsigned int, double>::iterator Y2alphas_it = Y2alphas.find(left_corner_index);
             if(Y2alphas_it == Y2alphas.end())
                 Y2alphas[left_corner_index]  = Z_alpha*transitive_left_nonterminal_corner(Z_index, left_corner_index);
             else
@@ -448,7 +447,7 @@ typename EarleyParser<T>::EarleySet EarleyParser<T>::predict(const EarleySet &in
 
     // add each state Y --> v, update the alphas and gammas
     EarleySet predicted_states;
-    for(hash_map<unsigned int, double>::const_iterator it = Y2alphas.begin(); it != Y2alphas.end(); it++)
+    for(map<unsigned int, double>::const_iterator it = Y2alphas.begin(); it != Y2alphas.end(); it++)
     {
         const unsigned int Y_index = it->first;
         const double Y_alpha = it->second;
@@ -469,7 +468,7 @@ typename EarleyParser<T>::EarleySet EarleyParser<T>::predict(const EarleySet &in
 }
 
 template <typename T>
-typename EarleyParser<T>::EarleySet EarleyParser<T>::scan(const EarleySet &in_states, unsigned int in_parse_column, const hash_set<T> &constraint_terminals) const
+typename EarleyParser<T>::EarleySet EarleyParser<T>::scan(const EarleySet &in_states, unsigned int in_parse_column, const set<T> &constraint_terminals) const
 {
     //assert(in_states.size() > 0);
 
@@ -483,7 +482,7 @@ typename EarleyParser<T>::EarleySet EarleyParser<T>::scan(const EarleySet &in_st
 
         // get the next symbol after the dot and test if it is a terminal by looking for it in the RHS of the rules
         const T& symbol_after_dot = current_state.nextSymbol();
-        typename hash_map<T, unsigned int>::const_iterator nonterminal2rules_list_it = nonterminal2rules_list.find(symbol_after_dot);
+        typename map<T, unsigned int>::const_iterator nonterminal2rules_list_it = nonterminal2rules_list.find(symbol_after_dot);
 
         // if symbol is a nonterminal then proceed to the next state
         if(nonterminal2rules_list_it != nonterminal2rules_list.end())
@@ -516,7 +515,7 @@ typename EarleyParser<T>::EarleySet EarleyParser<T>::complete(const EarleySet &i
     // for each completed state contains list of indices of states that it depends on
     ProgenitorsLists progenitors_lists(number_of_in_states, vector<Progenitor>());
     // maps from a completed state to its index in the return list
-    hash_map<EarleyState<T>, unsigned int> completed2index;
+    map<EarleyState<T>, unsigned int> completed2index;
     for(unsigned int i = 0; i < completed_states.size(); i++)
     {
         // if the completed_state is complete, then use it to get more completed states
@@ -541,7 +540,7 @@ typename EarleyParser<T>::EarleySet EarleyParser<T>::complete(const EarleySet &i
 
             // maps from index into the all input states to index into the completed states
             EarleyState<T> new_completed_state(current_in_state.rule(), current_in_state.start(), current_in_state.dot()+1);
-            typename hash_map<EarleyState<T>, unsigned int>::iterator completed2index_it = completed2index.find(new_completed_state);
+            typename map<EarleyState<T>, unsigned int>::iterator completed2index_it = completed2index.find(new_completed_state);
             // if the input state has not already been completed, do so
             if(completed2index_it == completed2index.end())
             {
