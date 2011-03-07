@@ -51,6 +51,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>D:\codes\cppcodes\libs\utils;D:\codes\cppcodes\libs\maths;D:\codes\cppcodes\libs\linearalgebra;D:\codes\cppcodes\libs\linearalgebra\tnt;D:\codes\cppcodes\apps\EarleyParser\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -88,7 +89,6 @@
     <ClInclude Include="..\..\libs\linearalgebra\tnt\shaobo_array1d.h" />
     <ClInclude Include="..\..\libs\linearalgebra\tnt\shaobo_array2d.h" />
     <ClInclude Include="..\..\libs\linearalgebra\tnt\shaobo_array3d.h" />
-    <ClInclude Include="..\..\libs\linearalgebra\tnt\tnt_math_utils.h" />
     <ClInclude Include="..\..\libs\utils\Stringable.h" />
     <ClInclude Include="src\BookKeeping.h" />
     <ClInclude Include="src\EarleyParser.h" />
