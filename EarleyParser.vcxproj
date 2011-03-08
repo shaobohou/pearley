@@ -50,7 +50,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\codes\cppcodes\libs\utils;D:\codes\cppcodes\libs\maths;D:\codes\cppcodes\libs\linearalgebra;D:\codes\cppcodes\libs\linearalgebra\tnt;D:\codes\cppcodes\apps\EarleyParser\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libs\utils;..\..\libs\maths;..\..\libs\linearalgebra;..\..\apps\EarleyParser\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
