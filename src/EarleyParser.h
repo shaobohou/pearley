@@ -1,13 +1,16 @@
 #ifndef EARLEY_PARSER
 #define EARLEY_PARSER
 
-#include "LinearAlgebra.h"
+#include "tnt/inv.h"
 #include "GrammarRule.h"
 #include "EarleyState.h"
 #include "ParseTree.h"
 
+#include <algorithm>
 #include <map>
 #include <set>
+
+using TNT::eye;
 
 
 // Earley Parser template definition

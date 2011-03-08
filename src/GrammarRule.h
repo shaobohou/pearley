@@ -1,11 +1,12 @@
 #ifndef GRAMMAR_RULE
 #define GRAMMAR_RULE
 
+#include "Stringable.h"
+
 #include <vector>
 #include <string>
 #include <sstream>
 
-#include "Stringable.h"
 
 template <typename T>
 class GrammarRule : public Stringable
