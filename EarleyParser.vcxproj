@@ -82,8 +82,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\libs\linearalgebra\tnt\array1d.h" />
     <ClInclude Include="..\..\libs\linearalgebra\tnt\array2d.h" />
-    <ClInclude Include="..\..\libs\linearalgebra\tnt\inv.h" />
     <ClInclude Include="..\..\libs\linearalgebra\tnt\jama_lu.h" />
+    <ClInclude Include="..\..\libs\linearalgebra\tnt\jama_lu_funcs.h" />
     <ClInclude Include="..\..\libs\utils\Stringable.h" />
     <ClInclude Include="src\BookKeeping.h" />
     <ClInclude Include="src\EarleyParser.h" />

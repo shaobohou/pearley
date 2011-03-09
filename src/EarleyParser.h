@@ -1,7 +1,7 @@
 #ifndef EARLEY_PARSER
 #define EARLEY_PARSER
 
-#include "tnt/inv.h"
+#include "tnt/jama_lu_funcs.h"
 #include "GrammarRule.h"
 #include "EarleyState.h"
 #include "ParseTree.h"
