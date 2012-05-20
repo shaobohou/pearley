@@ -4,8 +4,8 @@
 
 TEMPLATE = app
 TARGET +=
-DEPENDPATH += . ../Utils ../Maths ../Maths/tnt
-INCLUDEPATH += . ../Utils ../Maths ../Maths/tnt
+DEPENDPATH += . src src/utils src/maths src/maths/tnt
+INCLUDEPATH += . src src/utils src/maths src/maths/tnt
 CONFIG += release
 CONFIG -= qt
 QMAKE_CXXFLAGS_RELEASE += -pedantic -ansi

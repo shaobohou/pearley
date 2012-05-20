@@ -152,7 +152,9 @@ int main(int argc, char *argv[])
             viterbi_parse_tree = parser.getViterbiParse(earley_chart.back()[i], earley_chart);
         }
     viterbi_parse_tree.print(0, 0);
-    
+
+
+    /*
     for(unsigned int i = 0; i < states_counts.size(); i++)
     {
         for(unsigned int j = 0; j < states_counts[i].size(); j++)
@@ -166,5 +168,5 @@ int main(int argc, char *argv[])
         for(unsigned int j = 0; j < transition_probs.size(); j++)
             std::cout << transition_probs[j].first << " --> " << transition_probs[j].second << "    ";
         std::cout << std::endl;
-    }
+    }*/
 }

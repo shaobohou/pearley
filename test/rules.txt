@@ -1,0 +1,14 @@
+S _
+1.0 S --> NP VP
+1.0 NP --> Det N
+1.0 VP --> VT NP
+1.0 VP --> VI PP
+1.0 PP --> P NP
+1.0 Det --> a
+1.0 N --> circle
+1.0 N --> square
+1.0 N --> triangle
+1.0 VT --> touches
+1.0 VI --> is
+1.0 P --> above
+1.0 P --> below
